@@ -221,20 +221,15 @@ def scene_poland(w, h):
     p.line([((x0 + x1) / 2, 22), ((x0 + x1) / 2, 4)], "#C5D0D3", 1.5)
     p.rect((x0 + x1) / 2, 4, (x0 + x1) / 2 + 18, 9, fill="#FFFFFF")
     p.rect((x0 + x1) / 2, 9, (x0 + x1) / 2 + 18, 14, fill="#D4213D")
-    # border line and two missile tracks crossing it from the east
-    bxl = 214
-    for y in range(4, h - 12, 9):
-        p.line([(bxl, y), (bxl, y + 5)], "#F4C542", 1.6)
-    for k, y0 in enumerate((30, 62)):
-        pts = [(w - 8 - i * 9, y0 + (i * i) * 0.12 + k * 3) for i in range(12)]
-        for i in range(0, len(pts) - 1, 2):
-            p.line([pts[i], pts[i + 1]], "#F08A2C", 1.8)
-        hx, hy = pts[-1]
-        p.poly([(hx - 8, hy + 1), (hx, hy - 3), (hx, hy + 5)], fill="#F08A2C")
-    # summons envelope
-    ex, ey = 168, 70
-    p.rect(ex, ey, ex + 34, ey + 22, fill="#FFFFFF", r=2)
-    p.line([(ex, ey), (ex + 17, ey + 12), (ex + 34, ey)], "#16384A", 1.4)
+    # the summons: a large diplomatic letter with a red seal (no missile art: the day's news is the protest)
+    ex, ey, ew, eh = 190, 20, 110, 72
+    p.rect(ex + 4, ey + 4, ex + ew + 4, ey + eh + 4, fill="#0D2430", r=4)
+    p.rect(ex, ey, ex + ew, ey + eh, fill="#FFFFFF", r=4)
+    p.line([(ex, ey), (ex + ew / 2, ey + eh * 0.55), (ex + ew, ey)], "#16384A", 2)
+    p.line([(ex, ey + eh), (ex + ew * 0.4, ey + eh * 0.42)], "#C5D0D3", 1.4)
+    p.line([(ex + ew, ey + eh), (ex + ew * 0.6, ey + eh * 0.42)], "#C5D0D3", 1.4)
+    p.circle(ex + ew / 2, ey + eh * 0.55, 10, fill="#D4213D")
+    p.circle(ex + ew / 2, ey + eh * 0.55, 5, outline="#F4A3B0", width=1.4)
     return im
 
 
@@ -243,24 +238,19 @@ def scene_ebola(w, h):
     im = Image.new("RGB", (w * S, h * S), "#173A35")
     p = Pen(im)
     p.rect(0, h - 12, w, h, fill="#0E2622")
-    # rows of vials: many doses
-    for r in range(2):
-        for c in range(7):
-            x = 16 + c * 20 + r * 10
-            y = 30 + r * 34
-            p.rect(x, y + 6, x + 12, y + 30, fill="#DCEFF2", r=2)
-            p.rect(x, y + 18, x + 12, y + 30, fill="#7FC6D0", r=2)
-            p.rect(x - 1, y, x + 13, y + 7, fill="#2FA8A0", r=1)
-    # syringe
-    sx, sy = 176, 86
-    ang = -0.55
-    def rot(dx, dy):
-        return (sx + dx * math.cos(ang) - dy * math.sin(ang), sy + dx * math.sin(ang) + dy * math.cos(ang))
-    p.poly([rot(0, -7), rot(64, -7), rot(64, 7), rot(0, 7)], fill="#EAF0F1")
-    p.poly([rot(8, -5), rot(46, -5), rot(46, 5), rot(8, 5)], fill="#7FC6D0")
-    p.poly([rot(64, -2), rot(84, -0.6), rot(84, 0.6), rot(64, 2)], fill="#C5D0D3")
-    p.poly([rot(-14, -2), rot(0, -2), rot(0, 2), rot(-14, 2)], fill="#C5D0D3")
-    p.poly([rot(-18, -9), rot(-14, -9), rot(-14, 9), rot(-18, 9)], fill="#C5D0D3")
+    # one row of candidate-vaccine vials
+    for c in range(6):
+        x, y = 16 + c * 20, 52
+        p.rect(x, y + 6, x + 12, y + 36, fill="#DCEFF2", r=2)
+        p.rect(x, y + 20, x + 12, y + 36, fill="#7FC6D0", r=2)
+        p.rect(x - 1, y, x + 13, y + 7, fill="#2FA8A0", r=1)
+    # the purchase commitment: a signed document with a tick, not a jab (doses depend on trials)
+    dx, dy = 140, 14
+    p.rect(dx, dy, dx + 70, dy + 86, fill="#FFFFFF", r=3)
+    for i in range(5):
+        p.rect(dx + 9, dy + 12 + i * 10, dx + 61 - (i % 2) * 14, dy + 15 + i * 10, fill="#B8C6C9")
+    p.line([(dx + 10, dy + 72), (dx + 18, dy + 66), (dx + 24, dy + 74), (dx + 34, dy + 64)], "#16384A", 1.6)
+    p.line([(dx + 44, dy + 70), (dx + 50, dy + 77), (dx + 62, dy + 60)], "#4FA35F", 3)
     # filament virus: a long wavy thread with a closed loop (a crook shape reads as a "?")
     pts = []
     for i in range(48):
@@ -469,7 +459,7 @@ def render(out):
     # footer: date check, legend, sources
     fy = 964
     p.rect(16, fy - 2, 556, H - 6, outline=YEL, width=1.2, r=4)
-    p.text(24, fy + 2, "Date check: left out as other days' news", F("nb", 12), YEL)
+    p.text(24, fy + 2, "Date check: NOT this day's news, left out (real dates shown)", F("nb", 12), YEL)
     for i, d_ in enumerate(drops):
         x0 = 24 + (i % 2) * 268
         y = fy + 17 + (i // 2) * 11.5
